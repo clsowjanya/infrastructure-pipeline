@@ -15,7 +15,7 @@ node('linux') {
     
     stage('TerminateInstance') {
         def output = sh returnStdout: true, script: 'aws ec2 describe-instances --region us-east-1 | jq .'
-        echo outout
+        echo $outout
     }
     
 }
