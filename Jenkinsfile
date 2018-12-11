@@ -3,10 +3,10 @@ properties([pipelineTriggers([githubPush()])])
 pipeline {
     agent { node { label 'linux' } }
 	stages {
-		stage('Unit Tests') {    
+		stage('Setup') {    
 			steps {
-				sh 'ant -f test.xml -v'
-				junit 'reports/result.xml'
+				sh 'aws s3 cp https://s3.amazonaws.com/seis665/dynacorp/webapp.zip /webapp'
+				
 			}
 		}
 				
