@@ -9,11 +9,7 @@ pipeline {
 				unzip dir: '', glob: '', zipFile: 'webapp'
 			}
 		}
-		stage('Build') {
-	         		steps {
-					sh 'docker build -t dynacorpweb:${BUILD_NUMBER} .'
-            			}
-        	}
+		
 		
 	}
 }
