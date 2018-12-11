@@ -1,18 +1,35 @@
 properties([pipelineTriggers([githubPush()])])
-node('linux') {
-    git url: 'https://github.com/clsowjanya/infrastructure-pipeline.git', branch: 'master'
-    stage('Test') {
-        sh "env"
-    }
-    stage('GetInstances') {
-        sh "aws ec2 describe-instances --region us-east-1"
-        
-       
-    }
-    stage('CreateInstance') {
-        sh "aws ec2 run-instances --image-id ami-013be31976ca2c322 --count 1 --instance-type t2.micro --key-name seis665-leela-virginia-key --security-group-ids sg-1a679c55 --subnet-id subnet-0ff71a3a6b7f373bb --region us-east-1"
-    }
-    
-    
-    
+
+pipeline {
+    agent { node { label 'linux' } }
+	stages {
+		stage('Unit Tests') {    
+			steps {
+				sh 'ant -f test.xml -v'
+				junit 'reports/result.xml'
+			}
+		}
+		stage('Build') {
+ 	               steps {
+		    		echo 'Build stage....'
+		                sh 'ant -f build.xml -v'
+            	       }
+        	}
+	        stage('Deploy') {
+        	       steps {
+		                echo 'Deploy stage....'
+				archiveArtifacts artifacts: 'dist/rectangle-${BUILD_NUMBER}.jar'
+				sh(" aws s3 cp dist/rectangle-${BUILD_NUMBER}.jar s3://assignment-9/rectangle-${BUILD_NUMBER}.jar")	
+				
+            		}
+		}
+		stage('Report') {
+			steps {
+				echo 'Report stage....'
+				withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'jenkins-aws', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+					sh(" aws cloudformation describe-stack-resources --region us-east-1 --stack-name jenkins")		
+				}
+			}
+ 	       }		
+	}	
 }
