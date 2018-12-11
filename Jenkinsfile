@@ -22,8 +22,14 @@ pipeline {
 					
 				}
 			}
- 	    }
-		
-		
-	}	
+		}
+	}
+	post {
+		always {
+				cleanWs()
+				withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'jenkins-aws', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+					delete-stack --stack-name dynacorp-database
+				}
+		}	
+	}
 }
