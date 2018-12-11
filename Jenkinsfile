@@ -5,7 +5,7 @@ pipeline {
 	stages {
 		stage('Setup') {    
 			steps {
-				sh 'aws s3 cp s3://seis665/dynacorp/webapp.zip /workspace/infrastructure/webapp'
+				sh 'aws s3 cp s3://seis665/dynacorp/webapp.zip /webapp'
 				unzip dir: '', glob: '', zipFile: 'webapp'
 
 				
