@@ -6,7 +6,7 @@ pipeline {
 		stage('Setup') {    
 			steps {
 				sh 'aws s3 cp s3://seis665/dynacorp/webapp.zip /workspace/infrastructure/webapp'
-				unarchive(mapping: ['/webapp/': '/webapp/'])
+				unarchive(mapping: ['./webapp/': '/webapp/'])
 			}
 		}
 				
